@@ -1,0 +1,50 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{bbm}
+\usepackage{url}
+\usepackage{color}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage[utf8]{inputenc}
+\numberwithin{figure}{section}
+
+\newif\ifsolution
+\solutiontrue
+\newcommand{\Solution}[1]{%
+    {%
+        \medskip
+        \color{red}
+        \bf $\bigstar$~\sf\textbf{Solution}~$\bigstar$ \sf
+        \ifsolution
+        #1
+        \fi
+    }
+    \bigskip
+}
+
+\graphicspath{{assets}{Homework 1/assets/}}
+
+% \solutionfalse  % UNCOMMENT TO TURN OFF SOLUTIONS
+
+\title{CS224W Homework 1}
+\date{Due: Oct 16 11:59 p.m.}
+
+\begin{document}
+
+\maketitle
+
+\input{Homework 1/problems/gnn-expressiveness}
+
+\input{Homework 1/problems/node-embeddings}
+
+\input{Homework 1/problems/gcn}
+
+\end{document}

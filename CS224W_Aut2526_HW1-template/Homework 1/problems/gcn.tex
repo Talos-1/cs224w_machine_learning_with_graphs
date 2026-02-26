@@ -1,0 +1,83 @@
+\section{GCN (11 points)}
+
+% \textcolor{blue}{PageRank is no longer covered in lecture but its ideas are related to those of random walks and it is covered in Colab 1. This question can still help students develop a better understanding of how the importance of neighboring nodes impacts the importance of the centering node.}
+
+% \textcolor{blue}{We make the following modifications: We decrease the number of points allocated for this question to reflect the fact that the PageRank lecture is removed from the syllabus and other questions in this homework are more important. We also remove the original Q1.5 which delves deeper into formulations of the PageRank equation and isn't directly relevant to building intuition for PageRank. We add descriptions for how PageRank works (taken from Colab 1) and definitions for teleport weights and teleport sets. We adjust the personalized PageRank vectors so that the expected results are different.}
+
+Consider a graph $G = (V, E)$, with node features $x(v)$ for each $v \in V$. For each node $v \in V$, let $h^{(0)}_v = x(v)$ be the node’s initial embedding. At each iteration $k$, the embeddings are updated as 
+
+$$
+\begin{aligned}
+h_{\mathcal{N}(v)}^{(k)} & =\operatorname{AGGREGATE}\left(\left\{h_u^{(k-1)}, \forall u \in \mathcal{N}(v)\right\}\right) \\
+h_v^{(k)} & =\operatorname{COMBINE}\left(h_v^{(k-1)}, h_{\mathcal{N}(v)}^{(k)}\right),
+\end{aligned}
+$$
+
+\noindent for some functions $\operatorname{AGGREGATE}(\cdot)$ and $\operatorname{COMBINE}(\cdot)$. Note that the argument to the $\operatorname{AGGREGATE}(\cdot)$ function, $\left\{ h^{(k-1)}_u, \forall u \in \mathcal{N}(v) \right\}$, is a \textit{multi-set}.
+That is, since multiple nodes can have the same embedding, the same element can occur in $ \left\{h^{(k-1)}_u, \forall u \in \mathcal{N}(v) \right\}$ multiple times.
+Finally, a graph itself may be embedded by computing some function applied to the multi-set of all the node embeddings at some final iteration $K$, which we denote as 
+
+$$\operatorname { READOUT }\left(\left\{h_v^{(K)}, \forall v \in V\right\}\right)$$
+\noindent
+We want to use the graph embeddings above to test whether two graphs $G_1 = (V_1, E_1)$ and $G_2 = (V_2, E_2)$ are \textit{isomorphic}.
+Recall that this is true if and only if there is some bijection $\phi : V_1 \rightarrow V_2$ between nodes of $G_1$ and nodes of $G_2$ such that for any $u, v \in V_1$, 
+$$(u, v) \in E_1 \Leftrightarrow (\phi(u), \phi(v)) \in E_2$$
+\noindent
+The way we use the model above to test isomorphism is as follows. For the two graphs, if their readout functions differ, that is 
+
+$$\operatorname { READOUT }\left(\left\{h_v^{(K)}, \forall v \in V_1\right\}\right) \neq \operatorname { READOUT }\left(\left\{h_v^{(K)}, \forall v \in V_2\right\}\right),$$
+\noindent
+we conclude the graphs are \textit{not} isomorphic. Otherwise, we conclude the graphs are isomorphic. Note that this algorithm is not perfect: graph isomorphism is thought to be hard! Below, we will explore the expressiveness of these graph embeddings. 
+
+\subsection{Isomorphism Check (2 points)}
+Are the following two graphs isomorphic? If so, demonstrate an isomorphism
+between the sets of vertices. To demonstrate an isomorphism between two
+graphs, you need to find a 1-to-1 correspondence between their nodes and edges.
+If these two graphs are not isomorphic, prove it by finding a structure (node
+and/or edge) in one graph which is not present in the other. 
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\textwidth]{fig1.png}
+        \label{fig:my_label2}
+    \end{figure}
+
+\Solution{}
+
+\subsection{Aggregation Choice (3 points)} 
+The choice of the $\operatorname{AGGREGATE(\cdot)}$ is important for the expressiveness of the model above. Three common choices are: $$
+\begin{aligned}
+\operatorname{AGGREGATE}_{\max }\left(\left\{h_u^{(k-1)}, \forall u \in \mathcal{N}(v)\right\}\right)_i & =\max _{u \in \mathcal{N}(v)}\left(h_u^{(k-1)}\right)_i \text { (element-wise max)} \\
+\operatorname{AGGREGATE}_{\text {mean}}\left(\left\{h_u^{(k-1)}, \forall u \in \mathcal{N}(v)\right\}\right) & =\frac{1}{|\mathcal{N}(v)|} \sum_{u \in \mathcal{N}(v)}\left(h_u^{(k-1)}\right) \\
+\operatorname{AGGREGATE}_{\text {sum}}\left(\left\{h_u^{(k-1)}, \forall u \in \mathcal{N}(v)\right\}\right) & =\sum_{u \in \mathcal{N}(v)}\left(h_u^{(k-1)}\right)
+\end{aligned}
+$$
+Give an example of two graphs $G_1 = (V_1, E_1)$ and $G_2 = (V_2, E_2)$ and their initial node features, such that for some node $v_1 \in V_1$ and some node $v_2 \in V_2$ with the same initial features $h^{(0)}_{v_1} = h^{(0)}_{v_2}$, the updated features $h^{(1)}_{v_1}$ and $h^{(1)}_{v_2}$ are equal if we use mean and max aggregation, but different if 
+we use sum aggregation.\\
+
+\noindent
+\textbf{Hint:} Your node features can be scalars rather than vectors, i.e., one dimensional node features instead of $n$-dimensional. Also, you are free to arbitrarily choose the number of nodes and corresponding edges in your example.
+
+\Solution{}
+
+\subsection{Weisfeiler-Lehman Test (6 points)}
+Our isomorphism-test algorithm is known to be at most as powerful as the well-known \textit{Weisfeiler-Lehman test} (WL test). At each iteration, this algorithm updates the representation of each node to be the set containing its previous representation and the previous representations of all its neighbors. The full algorithm is below.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=1.0\textwidth]{algo-3.png}
+        \label{fig:my_label}
+    \end{figure}
+\noindent
+Prove that our neural model is at most as powerful as the WL test. More precisely, let $G_1$ and $G_2$ be non-isomorphic, and suppose that their node embeddings are updated over $K$ iterations with the same $\operatorname{AGGREGATE}(\cdot)$ and $\operatorname{COMBINE}(\cdot)$ functions. Show that if
+
+    $$\operatorname { READOUT }\left(\left\{h_v^{(K)}, \forall v \in V_1\right\}\right) \neq \operatorname { READOUT }\left(\left\{h_v^{(K)}, \forall v \in V_2\right\}\right),$$
+\noindent
+then the WL test also decides the graphs are not isomorphic.\\
+
+\noindent
+\textbf{Note:} Your proof has to hold for any choice of $\operatorname{AGGREGATE}(\cdot)$, $\operatorname{COMBINE}(\cdot)$, and $\operatorname{READOUT}(\cdot)$ functions. Namely, it's not sufficient to show this for a specific instance of the GNN model.\\
+
+\noindent
+\textbf{Hint:} Try to proceed by contradiction: assume that the \textit{Weisfeiler-Lehman} test \emph{cannot} distinguish $G_1$ and $G_2$ after $K$ iterations. Equivalently, after $K$ iterations, $\operatorname{READOUT}(\cdot)$ cannot distinguish the multi-sets of node embeddings of $G_1$ and $G_2$.
+
+\Solution{}

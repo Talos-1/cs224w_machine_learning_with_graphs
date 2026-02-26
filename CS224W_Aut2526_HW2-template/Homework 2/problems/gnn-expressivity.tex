@@ -1,0 +1,96 @@
+\section{GNNs as MLP of eigenvectors  [20 points]}
+\noindent\textit{Coverage: This problem is covered in Lecture 7.}
+
+In this problem, we analyze message-passing GNN layers from a spectral perspective. 
+We will (i) rewrite per-node updates in a batch matrix form, (ii) specialize to a single-layer MLP, and (iii) express the layer outputs in the eigenvector basis of the (symmetric) adjacency matrix.
+
+
+\subsection{Batch Node Update [2 points]}
+Consider the update for Graph Isomorphism Network (GIN):
+\begin{equation}
+    \mathbf{x}_v^{(l+1)} =  \texttt{MLP}\left(\left( 1+\epsilon\right) \mathbf{x}_v^{(l)}+\sum_{u\in\mathcal{N}\left(v\right)}\mathbf{x}_u^{(l)}\right),
+\end{equation}
+where $\mathbf{x}_v^{(l)}\in\mathbb{R}^{d_l}$ is the embedding of node $v$ at layer $l$. Let $\mathbf{X}^{(l)}\in\mathbb{R}^{N\times d_l}$ be a matrix containing the embeddings of all the nodes in the graph, i.e., $\mathbf{X}^{(l)}[v,:]=\mathbf{x}_v^{(l)\top}$. Also, let $\mathbf{A}\in\{0,1\}^{N\times N}$ represent the adjacency matrix of the graph. Write down the update of $\mathbf{X}^{(l+1)}$ as a function of $\mathbf{X}^{(l)}$ and $\mathbf{A}$.
+
+\Solution{
+
+}
+
+\subsection{Single Layer MLP [2 points]}
+Assume that $\texttt{MLP}\left(\right)$ represents a single layer MLP with no bias term followed by a pointwise nonlinearity~$\sigma$. Write down the update of $\mathbf{X}^{(l+1)}$ as a function of $\mathbf{X}^{(l)}$ and $\mathbf{A}$, and the trainable parameters $\mathbf{W}^{(l)}$ of layer $l$.
+
+\Solution{
+
+}
+
+\subsection{Eigenvector Extension [4 points]}\label{probelm:eig}
+Let $\left\{\lambda_n,\mathbf{v}_n\right\}_{n=1}^N$ represent the eigenvalues and eigenvectors of the symmetric adjacency $\mathbf{A}$. Then we can write $\mathbf{A}=\mathbf{V}\mathbf{\Lambda}\mathbf{V}^T$, where $\mathbf{V}\in\mathbb{R}^{N\times N}$ is the matrix of eigenvectors with $\mathbf{V}[:,n]=\mathbf{v}_n$ and $\mathbf{\Lambda}\in\mathbb{R}^{N\times N}$ is the diagonal matrix of eigenvalues with $\mathbf{\Lambda}[n,n]=\lambda_n$. Show that 
+\begin{equation*}
+\mathbf{X}^{(l+1)} =\sigma\left(\mathbf{V} \hat{\mathbf{W}}^{(l)}\right)
+\end{equation*}
+where $\hat{\mathbf{W}}^{(l)}$ has entries
+\[
+\hat{\mathbf{W}}^{(l)}[n,j]
+\;=\;
+\big(\lambda_n+1+\epsilon\big)\,
+\sum_{i=1}^{d_l}\mathbf{W}^{(l)}[i,j]\;\big\langle \mathbf{v}_n,\;\mathbf{X}^{(l)}[:,i]\big\rangle,
+\]
+and $\langle\cdot\rangle$ denotes the dot product. 
+
+Hint: Use the fact that the eigenvectors of a symmetric matrix form an orthonormal basis. In other words, the matrix $\mathbf{V}$ of eigenvectors is orthogonal, i.e., $\mathbf{V}^\top\mathbf{V}=\mathbf{V}\mathbf{V}^\top = \mathbf{I}$. 
+Next, show that each feature across all nodes, $\mathbf{X}^{(l+1)}[:,i]$, can be expressed as a linear combination of eigenvectors, followed by a pointwise nonlinearity. 
+
+
+
+\Solution{
+
+}
+
+\subsection{GraphSAGE [4 points]}
+Perform the same analysis for the GraphSAGE update when the aggregation function is sum pooling. \emph{i.e.}, derive (i)  $\mathbf{X}^{(l+1)}$ and (ii) $\hat{\mathbf{W}}^{(l)}[n,j]$. Recall that the GraphSAGE update function is
+\begin{align*}
+    \mathbf{x}_v^{(l+1)} &= \sigma \left(\mathbf{W}^{(l)} \cdot \mathrm{CONCAT}\left(\mathbf{x}_v^{(l)}, \mathbf{x}_{N(v)}^{(l)}\right) \right) \\
+    &= \sigma \left(\mathbf{W}_1^{(l)} \mathbf{x}_v^{(l)} + \mathbf{W}_2^{(l)} \mathrm{AGG}\left(\mathbf{x}_u^{(l)}, \forall u \in N(v))\right) \right)
+\end{align*}
+
+\Solution{
+
+}
+
+\subsection{Eigendecomposition Analysis [8 points]}
+
+\begin{center}
+    \includegraphics[scale=0.5]{expressivity-graphs.png}
+\end{center}
+
+For graphs $\mathcal{G}$ and $\hat{\mathcal{G}}$ instantiate the graph adjacencies in Numpy, PyTorch, or PyG, and compute their eigenvalue decompositions. What do you observe? [2 points]
+
+\Solution{
+
+}
+
+Consider a GIN where all nodes start with the same initial color, i.e., $\mathbf{x}_v^{(0)} = 1$ for all nodes $v\in \mathcal{V}$. This setup is equivalent to having $\mathbf{X}^{(0)} = \mathbf{1}$, where $\mathbf{1}$ denotes the all-one vector. This is the initialization of the WL test. Using the equations in \ref{probelm:eig}, derive the expression for $\mathbf{X}^{(1)}$. [2 points]
+
+\Solution{
+
+}
+
+Observe from your previous result that each column \(\mathbf{X}^{(1)}[:,j]\) is a linear combination of eigenvectors, followed by a pointwise nonlinearity. What is the weight associated with each eigenvector? What factors determine this weight? [2 points]
+
+
+
+\Solution{
+
+}
+
+Compute the dot product $\langle\mathbf{v}_n,\mathbf{X}^{(0)}\rangle$, for each eigenvector across both graphs. In other words, compute the dot products $c_n=\langle \mathbf{v}_n,\mathbf{1}_N\rangle$ for $\mathcal{G}$ and $\hat{c}_n=\langle \hat{\mathbf{v}}_n,\mathbf{1}_N\rangle$ for $\hat{\mathcal{G}}$. What do you observe? [1 point]
+
+\Solution{
+
+}
+
+What does the previous result suggest about $\mathbf{X}^{(1)}$ for the graphs $\mathcal{G}$ and $\hat{\mathcal{G}}$? [1 point]
+
+\Solution{
+
+}

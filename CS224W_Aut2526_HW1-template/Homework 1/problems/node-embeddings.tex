@@ -1,0 +1,65 @@
+\section{Node Embedding and its Relation to Matrix Factorization (24 points)}
+
+\textbf{ What to submit: For Q2.1, one or more sentences/equations describing the decoder. For Q2.2, write down the objective function. For Q2.3, describe the characteristics of $W$ in one or more sentences. For Q2.4, write down the objective function. For Q2.5, characterize the embeddings, whether you think it will reflect structural similarity, and your justification. For Q2.6, one or more sentences for node2vec and struct2vec respectively. For Q2.7, one or more sentences of explanation. For Q2.8, one or more sentences characterizing embeddings from struct2vec.}
+
+Recall that matrix factorization and the encoder-decoder view of node embeddings are closely related. For the embeddings, when properly formulating the encoder-decoder and the objective function, we can find equivalent matrix factorization formulation approaches.\\
+\\
+    Note that in matrix factorization we are optimizing for L2 distance; in encoder-decoder examples such as DeepWalk and node2vec, we often use log-likelihood as in lecture slides. The goal to approximate A with $Z^TZ$ is the same, but for this question, stick with the L2 objective function.
+\subsection{Simple matrix factorization (3 points)}
+In the simple matrix factorization, the objective is to approximate adjacency matrix A by the product of embedding matrix with its transpose. The optimization objective is $\min_Z ||A - Z^TZ||_2$.\\
+\\
+In the encoder-decoder perspective of node embeddings, what is the decoder? (Please provide a mathematical expression for the decoder)
+
+\Solution{}
+
+\subsection{Alternate matrix factorization (3 points)}
+In linear algebra, we define bilinear form as $z_i^T W z_j$, where W is a matrix. Suppose that we define the decoder as the bilinear form, what would be the objective function for the corresponding matrix factorization? (Assume that the $W$ matrix is fixed)
+
+\Solution{}
+
+\subsection{BONUS: Relation to eigen-decomposition (3 points)}
+Recall eigen-decomposition of a matrix (\href{https://en.wikipedia.org/wiki/Eigendecomposition_of_a_matrix}{link}). What would be the condition of W, such that the matrix factorization in the previous question (2.2) is equivalent to learning the eigen-decomposition of matrix A?
+
+\Solution{}
+
+\subsection{Multi-hop node similarity (3 points)}
+Define node similarity with the multi-hop definition: 2 nodes are similar if they are connected by at least one path of length at most k, where k is a parameter (e.g. $k = 2$). Suppose that we use the same encoder (embedding lookup) and decoder (inner product) as before. What would be the corresponding matrix factorization problem we want to solve?
+
+\Solution{}
+
+\subsection{node2vec \& struct2vec (i) (3 points)}
+Finally, we’ll explore some limitations of node2vec that are introduced in the lecture, and look at algorithms that try to overcome them.\\
+\\
+As mentioned in the lecture, due to the way random walk works, it’s hard for node2vec to learn structural embedding from the graph. Think about how a new algorithm called \textbf{struct2vec} works. For this question, we define a \textbf{clique} to be a fully connected graph, where any two nodes are connected.\\
+\\
+Given a graph $G(V,E)$, it defines K functions $g_k(u,v)$, $k = 1,2,..,K$, which measure the structural similarity between nodes. The parameter k means that only the local structures within distance k of the node are taken into account.
+With all the nodes in G, regardless of the existing edges, it forms a new clique graph where any two nodes are connected by an edge whose weight is equal to the structural similarity between them. Since struct2vec defines K structural similarity functions, each edge has a set of possible weights corresponding to $g_1, g_2,...,g_K$.\\
+\\
+The random walks are then performed on the clique. During each step, weights are assigned according to different $g_k$’s selected by some rule (omitted here for simplification). Then, the algorithm chooses the next node with probability proportional to the edge weights.\\
+\\
+Characterize the vector representations (i.e. the embedding space) of the 10-node cliques after running the \textbf{node2vec} algorithm on the graph in figure \ref{fig:10-node}. Assume through the random walk, nodes that are close to each other have similar embeddings. Do you think the node embeddings will reflect the structural similarity? Justify your answer.
+
+\begin{figure}[!htb]
+\centering
+  \includegraphics[width=0.6\columnwidth]{fig5.png}
+  \caption{Two 10-node cliques}
+  \label{fig:10-node}
+\end{figure}
+
+\Solution{}
+
+
+\subsection{node2vec \& struct2vec (ii) (3 points)}
+In the above figure \ref{fig:10-node}, suppose you arrive at node w. What are the nodes that you can reach after taking one step further with the node2vec algorithm? What about with the struct2vec algorithm (suppose that for this graph, $g_k(u, v) > 0$ for any u,v,k)?
+
+\Solution{}
+
+\subsection{node2vec \& struct2vec(iii) (3 points)}
+Why is it necessary to consider different $g_k$'s during the random walk? (Please provide a more general answer, without limiting it to the specific example given)
+
+\Solution{}
+
+\subsection{node2vec \& struct2vec (iv) (3 points)}
+Characterize the vector representations (i.e. the embedding space) of the two 10-node cliques after running the struct2vec algorithm on the graph in the above figure (Figure \ref{fig:10-node}).
+
+\Solution{}

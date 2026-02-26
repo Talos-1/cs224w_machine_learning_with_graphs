@@ -1,0 +1,58 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsbsy}
+\usepackage{bbm}
+\usepackage{url}
+\usepackage{color}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{fancyhdr}
+\usepackage{enumerate}
+\usepackage{tikz}
+\usepackage[ruled,vlined]{algorithm2e}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage[utf8]{inputenc}
+\numberwithin{figure}{section}
+
+\newif\ifsolution
+\solutiontrue
+\newcommand{\Solution}[1]{%
+    {%
+        \medskip
+        \color{red}
+        \bf $\bigstar$~\sf\textbf{Solution}~$\bigstar$ \sf
+        \ifsolution
+        #1
+        \fi
+    }
+    \bigskip
+}
+
+\graphicspath{{assets}{Homework 2/assets/}}
+
+
+\title{CS224W Homework 2}
+\date{Due: October 30, 2025}
+
+\begin{document}
+
+\maketitle
+\input{Homework 2/problems/gnn-expressivity}
+
+\input{Homework 2/problems/transE-embeddings}
+
+\input{Homework 2/problems/kg-expressiveness}
+
+
+
+\section{Honor Code [0 points]}
+(X) I have read and understood Stanford Honor Code before I submitted my
+work.
+
+**Collaboration: Write down the names \& SUNetIDs of students you collaborated with on Homework 2 (None if you didn’t).**
+
+**Note: Read our website on our policy about collaboration!**
+
+\end{document}

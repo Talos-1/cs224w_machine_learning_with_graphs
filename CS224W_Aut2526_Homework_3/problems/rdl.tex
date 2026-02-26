@@ -1,0 +1,100 @@
+% Last used - Aut2425
+
+\section{Relational Deep Learning [15 points]}
+\noindent\textit{Coverage: This problem is covered in Lecture 12.}
+% General RDL description (if not covered by lectures)
+
+\begin{center}
+    \includegraphics[scale=0.5]{hw3-rdl.png}
+\end{center}
+
+Assume we have the relational database as seen above, which consists of three tables. These tables contain information about products, customers, and transactions in which customers purchase products. Each table contains a unique identifier, known as a \textit{primary key}, potentially along with other attributes. \textit{Foreign keys} in a table create connections between tables by referencing primary keys in other tables. In the three tables shown above, \texttt{ProductID}, \texttt{TransactionID}, and \texttt{CustomerID} are the primary keys in their respective tables, while \texttt{ProductID} and \texttt{CustomerID} are also foreign keys for the \texttt{Transactions} table.
+
+\subsection{Schema Graph [1 point]}
+A key component of a relational deep learning framework is the schema graph, which illustrates the relationships between tables in a database. In a schema graph, each table is represented as a node, and an edge is drawn between two nodes if a primary key from one table appears as a foreign key in another. This graph helps visualize how data is linked across the database.
+
+Describe what the schema graph of this database would look like or draw it (hint: it’s very simple).
+
+% your solution here
+\Solution{}
+
+\subsection{Relational Entity Graph [4 points]}
+
+Another component of this framework is the relational entity graph. The nodes of this graph are all the individual entities rather than tables.  Links are again made by primary-foreign key connections --- that is, two entities are linked if they appear together in the same entry of any table in the database. Given the list of transactions below, produce a relational entity graph describing this database.
+
+In your graph, nodes should be labeled by their primary key values (for example, \texttt{102} rather than \texttt{Bob}).
+
+\begin{table}[H]
+\centering
+\caption{Products}
+\vspace{2mm}
+
+\begin{tabular}{|c|l|c|c|}
+\hline
+\textbf{ProductID} & \textbf{Description} & \textbf{Image} & \textbf{Size} \\
+\hline
+1 & Smartphone & [] & Small \\
+2 & Laptop & [] & Medium \\
+3 & TV & [] & Large \\
+4 & Headphones & [] & Small \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Customers}
+\vspace{2mm}
+
+\begin{tabular}{|c|l|}
+\hline
+\textbf{CustomerID} & \textbf{Name} \\
+\hline
+101 & Alice \\
+102 & Bob \\
+103 & Carol \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Transactions}
+\vspace{2mm}
+
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\textbf{TransactionID} & \textbf{ProductID} & \textbf{Timestamp} & \textbf{CustomerID} & \textbf{Price (\$)} \\
+\hline
+1001 & 1 & 2024-10-15 & 101 & 600 \\
+1002 & 3 & 2024-10-20 & 102 & 500 \\
+1003 & 2 & 2024-10-26 & 103 & 1300 \\
+1004 & 4 & 2024-11-01 & 101 & 100 \\
+1005 & 1 & 2024-11-02 & 101 & 600 \\
+1006 & 2 & 2024-11-12 & 103 & 1300 \\
+\hline
+\end{tabular}
+\end{table}
+
+% your solution here
+\Solution{}
+
+\subsection{Computation Graphs [6 points]}
+The computational graphs used for training are dependent on the specific timestep used for prediction. For example, let’s assume our training table (which defines the information we seek to predict) contains the following information:
+\begin{enumerate}
+    \item[a.] Target: How much total money a customer spends in the next 30 days
+    \item[b.] ID: Customer ID
+    \item[c.] Timestep: The time at which the 30 day period starts
+\end{enumerate}
+When predicting, we can only use the information in the database that takes place before our prediction period. That means the computational graphs (the specific set of nodes and connections we send messages over) we use for predictions are directly dependent on the timestep in our training table. Let’s say we want to make predictions for customer 101. Using the tables from the previous part, draw out the computation graphs if we wanted to make predictions on \texttt{2024-10-20}, \texttt{2024-11-01}, and \texttt{2024-11-12}. 
+
+You should provide a computation graph for each prediction date. Note that since we want to make predictions on the \emph{customer} level, you'll need to determine how edges in your computation graphs should be directed (i.e., the direction of message passing).
+
+% your solution here
+\Solution{}
+
+\subsection{Message Passing [4 points]}
+ A relational database will produce a heterogeneous graph. What are example message passing and update rules that can be used to make predictions like the one mentioned above? We will accept any reasonable message passing and update rules for a heterogenous GNN that could model the data.
+
+% your solution here
+\Solution{}

@@ -1,0 +1,88 @@
+\section{Graph Transformers [20 points]}
+\noindent\textit{Coverage: This problem is covered in Lecture 8.}
+
+We study how standard Transformer components (tokens, positional encodings, and self-attention) can be adapted to graphs, how attention relates to message passing, and how to inject structure and edge features into the attention mechanism.
+
+\subsection{Self-Attention as Message Passing [4 points]}
+Recall the single-head self-attention update with inputs $X\!\in\!\mathbb{R}^{n\times d}$:
+\[
+\mathrm{Att}(X)=\mathrm{softmax}\!\big(QK^\top\big)V,\quad
+Q=XW_Q,\ K=XW_K,\ V=XW_V.
+\]
+Focusing on node $i$, one can write
+\[
+\mathbf{z}_i=\sum_{j=1}^{n}\underbrace{\mathrm{softmax}_j\big(\mathbf{q}_i^\top\mathbf{k}_j\big)}_{\alpha_{ij}}\,\mathbf{v}_j.
+\]
+Show that if we \emph{mask} the softmax to only sum over neighbors $j\in\mathcal{N}(i)$ (and optionally $i$ itself), namely we set $\alpha_{ij}=0$ for non-neighbors by applying an adjacency mask, the update reduces to a message passing GNN layer akin to GAT. Write the masked update and explain the correspondence between messages and aggregation.
+
+\textbf{What to submit?} The masked equation and 2--3 sentences explaining why this is message passing.
+
+\Solution{
+}
+
+\subsection{Designing Tokens and Positional Encodings [8 points]}
+A graph Transformer must decide (i) what the \emph{tokens} are, and (ii) how to inject \emph{position/structure}. Consider node-level prediction on a graph $G$ with node features $X$.\\
+
+(a) Suppose we design a graph Transformer that treats each \textbf{node} as a token and uses \textbf{Laplacian eigenvectors} for positional encodings (PEs). 
+
+Let $P \in \mathbb{R}^{n \times k}$ be the PE matrix derived from the graph Laplacian. 
+(i) Clearly describe how $P$ is constructed.  
+(ii) If we do not simply add $P$ to the node feature matrix $X$, explain how $P$ and $X$ are combined to form the Transformer’s input representation for each node. 
+
+\textbf{What to submit:} A precise definition of $P$ and a short formula or description showing how $X$ and $P$ are combined into the model input.\\
+
+(b) Briefly state one strength and one limitation of Laplacian-eigenvector PEs.
+
+\textbf{What to submit?}  2 sentences describing the strength and limitation repectively.
+
+(c) Explain in 1--2 sentences why using the P you constructed above as PEs can lead to the drawback you mentioned.\\
+
+\textbf{What to submit?}  1-2 sentences.
+
+(d) Propose one method to mitigate this without changing the downstream Transformer (e.g., data augmentation or invariant processing), and briefly justify it.
+
+\textbf{What to submit?}  1-2 sentences.
+
+\Solution{
+}
+
+\subsection{Injecting Edge Features into Attention [4 points]}
+Suppose $G$ has edge features $\mathbf{e}_{ij}\in\mathbb{R}^{m}$ for $(i,j)\in E$. A practical way to incorporate them is to \emph{bias} the attention logits:
+\[
+\tilde{\alpha}_{ij}\ \propto\ \exp\!\Big(\mathbf{q}_i^\top\mathbf{k}_j\ +\ c_{ij}\Big),
+\qquad c_{ij}= 
+\begin{cases}
+\mathbf{w}_1^\top \mathbf{e}_{ij}, & (i,j)\in E\\[2pt]
+\sum_{r=1}^{R}\sigma\!\big(\mathbf{w}_r^\top \mathbf{e}^{(r)}\big), & \text{if } j \text{ is at path-length } r\le R
+\end{cases}
+\]
+where $\{\mathbf{e}^{(r)}\}$ are features along a shortest path from $i$ to $j$ of length $r$ (if within radius $R$).
+
+(a) In 1--2 sentences, explain how $c_{ij}$ changes the receptive field and what happens if $R=1$ vs.\ larger $R$.\\
+(b) Give one advantage and one drawback of this biasing scheme.
+
+\textbf{What to submit?} 3--4 sentences total.
+
+\Solution{
+}
+
+\subsection{Complexity and Sparsity Trade-offs [4 points]}
+Let $n$ be the number of nodes, $d$ the model hidden width per token, and let the graph have $|E|$ edges. Unless otherwise noted, count only the attention-specific work (score computation and attention–value product); the linear projections for $Q,K,V$ cost $O(nd^2)$ in both cases and do not change the asymptotic comparison.
+
+
+(a) State the per-layer time complexity for:
+\begin{itemize}
+  \item Dense self-attention run over all $n$ node tokens.
+  \item Sparse, masked attention like we showed in Problem 1.1 where each node attends only to its neighbors (i.e., edges in $E$).
+\end{itemize}
+
+(b) In one sentence each, give:
+\begin{itemize}
+  \item A setting where dense attention is preferable.
+  \item A setting where masked sparse attention is preferable.
+\end{itemize}
+
+\textbf{What to submit?} The two complexities and two sentences.
+
+\Solution{
+}
